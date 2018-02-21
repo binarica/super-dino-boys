@@ -14,7 +14,7 @@ package
 		
 		private var level:int = 1;
 		
-		public function Behaviors(enemy:Enemy, player:Hero)
+		public function Behaviors(enemy:Enemy, player: Hero)
 		{
 			this.enemy = enemy;
 			this.player = player;
@@ -64,7 +64,7 @@ package
 			}
 			if (level == 2)
 			{
-				if ((enemy.enemyList[level-1].scaleX == -C.GAME_SCALE && player.graphic.x >= enemy.enemyList[level-1].x - C.ATTACK_RANGE - C.ATTACK_REACH) || (enemy.enemyList[level-1].scaleX == C.GAME_SCALE && player.graphic.x <= enemy.enemyList[level-1].x + C.ATTACK_RANGE + C.ATTACK_REACH))
+				if ((enemy.enemyList[level-1].scaleX == -C.GAME_SCALE && player.model.x >= enemy.enemyList[level-1].x - C.ATTACK_RANGE - C.ATTACK_REACH) || (enemy.enemyList[level-1].scaleX == C.GAME_SCALE && player.model.x <= enemy.enemyList[level-1].x + C.ATTACK_RANGE + C.ATTACK_REACH))
 				{
 					if((player.isPunching || player.isKicking) && !enemy.isJumping)
 					{
@@ -78,7 +78,7 @@ package
 			}
 			else
 			{
-				if ((enemy.enemyList[level-1].scaleX == -C.GAME_SCALE && player.graphic.x >= enemy.enemyList[level-1].x - C.ATTACK_RANGE) || (enemy.enemyList[level-1].scaleX == C.GAME_SCALE && player.graphic.x <= enemy.enemyList[level-1].x + C.ATTACK_RANGE))
+				if ((enemy.enemyList[level-1].scaleX == -C.GAME_SCALE && player.model.x >= enemy.enemyList[level-1].x - C.ATTACK_RANGE) || (enemy.enemyList[level-1].scaleX == C.GAME_SCALE && player.model.x <= enemy.enemyList[level-1].x + C.ATTACK_RANGE))
 				{
 					if((player.isPunching || player.isKicking) && !enemy.isJumping)
 					{
@@ -94,12 +94,12 @@ package
 		
 		private function move(distance:int):void
 		{
-			if (player.graphic.x <= enemy.enemyList[level-1].x - distance)
+			if (player.model.x <= enemy.enemyList[level-1].x - distance)
 			{
 				enemy.left = true;
 				enemy.right = false;
 			}
-			else if (player.graphic.x >= enemy.enemyList[level-1].x + distance)
+			else if (player.model.x >= enemy.enemyList[level-1].x + distance)
 			{
 				enemy.right = true;
 				enemy.left = false;

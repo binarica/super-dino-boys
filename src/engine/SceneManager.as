@@ -17,7 +17,7 @@ package engine
 			Locator.updateManager.addCallback(onUpdate);
 			Locator.mainStage.addChild(screenContainer);
 			
-			Locator.console.registerCommand("loadscreen", loadScene, "Loads another screen.");
+			//Locator.console.registerCommand("loadscreen", loadScene, "Loads another screen.");
 		}
 		
 		protected function onUpdate(event:Event):void

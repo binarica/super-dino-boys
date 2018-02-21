@@ -12,7 +12,7 @@ package engine
 		private var sounds:Vector.<Sound> = new Vector.<Sound>();
 		private var urls:Vector.<URLRequest> = new Vector.<URLRequest>();
 		private var channels:Vector.<SoundChannel> = new Vector.<SoundChannel>();
-		private var numSounds:int = 10;
+		private var numSounds:int = 13;
 		
 		public function SoundManager()
 		{
@@ -20,18 +20,21 @@ package engine
 			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/03 Dawn Metropolis.mp3"));
 			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/07 Mermaid.mp3"));
 			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/bite.mp3"));
-			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/PUNCH.mp3"));
 			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/punch1.mp3"));
 			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/punch2.mp3"));
+			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/kick1.mp3"));
 			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/dog.mp3"));
 			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/scream.mp3"));
 			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/doom.mp3"));
+			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/you-win.mp3"));
+			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/you-lose.mp3"));
+			urls.push(new URLRequest(C.ENGINE_PATH + "sounds/04 Planet.mp3"));
 			
 			for (var i:int = 0; i < urls.length; i++) 
 			{
 				var sample:Sound = new Sound();
 				sample.load(urls[i]);
-				sample.addEventListener(IOErrorEvent.IO_ERROR,loaderCheck);
+				sample.addEventListener(IOErrorEvent.IO_ERROR, loaderCheck);
 				sounds.push(sample);
 			}
 			
@@ -47,7 +50,7 @@ package engine
 			var config:SoundTransform = new SoundTransform();
 			config.volume = vol;
 			channels[id].stop();
-			channels[id] = sounds[id].play(0,loops,config);
+			channels[id] = sounds[id].play(0, loops, config);
 		}
 		
 		private function loaderCheck(e:Event):void
@@ -58,6 +61,14 @@ package engine
 		public function stop(id:int):void
 		{
 			channels[id].stop();
+		}
+		
+		public function stopAllSounds():void
+		{
+			for each(var sc:SoundChannel in channels)
+			{
+				sc.stop();
+			}	
 		}
 	}
 }

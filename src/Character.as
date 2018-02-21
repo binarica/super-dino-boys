@@ -1,11 +1,9 @@
 package
 {
-	public class Entity
+	public class Character
 	{
 		public var velocityY:int = 0;
 		public var floorY:int = 800;
-		
-		public var health:int;
 		
 		public var left:Boolean = false;
 		public var right:Boolean = false;
@@ -26,7 +24,7 @@ package
 		public var damage:Boolean = false;
 		public var damageAnimation:Boolean = false;
 		
-		public function Entity()
+		public function Character()
 		{
 			
 		}

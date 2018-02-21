@@ -2,6 +2,7 @@ package
 {
 	import flash.events.Event;
 	import engine.Locator;
+	import engine.SoundManager;
 	
 	[SWF(width="1440", height="900", frameRate="30", backgroundColor="#000000")]
 	public class Main extends Locator

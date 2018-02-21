@@ -12,6 +12,9 @@ package
 		public static const PLAYER_DEATH:int = 7;
 		public static const ENEMY_DEATH:int = 8;
 		public static const BOSS_DEATH:int = 9;
+		public static const YOU_WIN:int = 10;
+		public static const YOU_LOSE:int = 11;
+		public static const ENDING:int = 12;
 		
 		public function SoundID()
 		{

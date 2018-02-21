@@ -7,21 +7,21 @@ package
 		{
 		}
 		
-		public function checkCollisionWithPlayer(enemy:Enemy, hero:Hero):String // cambiar a entity!
+		public function checkCollisionWithPlayer(enemy:Enemy, player:Hero, level:int):String
 		{
-			if(enemy.graphic.getChildByName("Hand").hitTestObject(hero.graphic.getChildByName("UpperBox")))
+			if(enemy.enemyList[level-1].getChildByName("Hand").hitTestObject(player.model.getChildByName("UpperBox")))
 			{
 				return "UpperPunch";
 			}
-			else if(enemy.graphic.getChildByName("Hand").hitTestObject(hero.graphic.getChildByName("LowerBox")))
+			else if(enemy.enemyList[level-1].getChildByName("Hand").hitTestObject(player.model.getChildByName("LowerBox")))
 			{
 				return "LowerPunch";
 			}
-			else if(enemy.graphic.getChildByName("Foot").hitTestObject(hero.graphic.getChildByName("UpperBox")))
+			else if(enemy.enemyList[level-1].getChildByName("Foot").hitTestObject(player.model.getChildByName("UpperBox")))
 			{
 				return "UpperKick";
 			}
-			else if(enemy.graphic.getChildByName("Foot").hitTestObject(hero.graphic.getChildByName("LowerBox")))
+			else if(enemy.enemyList[level-1].getChildByName("Foot").hitTestObject(player.model.getChildByName("LowerBox")))
 			{
 				return "LowerKick";	
 			}
@@ -31,21 +31,21 @@ package
 			}
 		}
 		
-		public function checkCollisionWithEnemy(hero:Hero, enemy:Enemy):String
+		public function checkCollisionWithEnemy(player:Hero, enemy:Enemy, level:int):String
 		{
-			if(hero.graphic.getChildByName("Mano").hitTestObject(enemy.graphic.getChildByName("UpperBox")))
+			if(player.model.getChildByName("Mano").hitTestObject(enemy.enemyList[level-1].getChildByName("UpperBox")))
 			{
 				return "UpperPunch";
 			}
-			else if(hero.graphic.getChildByName("Mano").hitTestObject(enemy.graphic.getChildByName("LowerBox")))
+			else if(player.model.getChildByName("Mano").hitTestObject(enemy.enemyList[level-1].getChildByName("LowerBox")))
 			{
 				return "LowerPunch";
 			}
-			else if(hero.graphic.getChildByName("Foot").hitTestObject(enemy.graphic.getChildByName("UpperBox")))
+			else if(player.model.getChildByName("Foot").hitTestObject(enemy.enemyList[level-1].getChildByName("UpperBox")))
 			{
 				return "UpperKick";
 			}
-			else if(hero.graphic.getChildByName("Foot").hitTestObject(enemy.graphic.getChildByName("LowerBox")))
+			else if(player.model.getChildByName("Foot").hitTestObject(enemy.enemyList[level-1].getChildByName("LowerBox")))
 			{
 				return "LowerKick";	
 			}

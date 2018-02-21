@@ -8,9 +8,12 @@ package
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
-	public class Hero extends Entity
+	public class Hero extends Character
 	{
-		public var graphic:MovieClip;	
+		public var model:MovieClip;
+		
+		public var speed:Number = C.PLAYER_SPEED;
+		public var health:int = C.PLAYER_MAX_HEALTH;
 		
 		private var timerPunch:uint;
 		private var timerKick:uint;
@@ -20,8 +23,8 @@ package
 		
 		public function Hero()
 		{
-			graphic = new MovieClip();
-			graphic = Locator.assetManager.getMovieClip("Dino");
+			model = new MovieClip();
+			model = Locator.assetManager.getMovieClip("Dino");
 			
 			Locator.inputManager.setRelation("Up", Keyboard.W);
 			Locator.inputManager.setRelation("Down", Keyboard.S);
@@ -29,16 +32,47 @@ package
 			Locator.inputManager.setRelation("Right", Keyboard.D);
 			Locator.inputManager.setRelation("Punch", Keyboard.J);
 			Locator.inputManager.setRelation("Kick", Keyboard.K);	
+			
+			Locator.console.registerCommand("doublespeed", doubleSpeed, "Double speed.");
+			Locator.console.registerCommand("fly", godMode, "Fly Mode.");
+			Locator.console.registerCommand("god", godMode, "God Mode.");
+			Locator.console.registerCommand("givehealth", giveHealth, "Full health.");
+			Locator.console.registerCommand("givepowershield", givePowerShield, "Power shield.");
+		}
+		
+		public function doubleSpeed():void
+		{
+			speed *= 2;
+			Locator.console.write("Double Speed! Yee-haw!");
+		}
+		
+		public function godMode(status:String):void
+		{
+			if (status == "on")
+				Locator.console.write("God mode on");
+			else if(status == "off")
+				Locator.console.write("God mode off");	
+			else
+				Locator.console.write("Missing parameter");
+		}
+		
+		public function giveHealth():void
+		{
+			health = C.PLAYER_MAX_HEALTH;
+			Locator.console.write("Restored to full health!");
+		}
+		
+		public function givePowerShield():void
+		{
+			trace("super mega fokken power shield");
 		}
 		
 		override public function spawn(x:int, y:int):void
 		{
-			Locator.mainStage.addChild(graphic);
-			graphic.x = x;
-			graphic.y = y;
-			graphic.scaleX = graphic.scaleY = C.GAME_SCALE;
-			
-			health = C.PLAYER_MAX_HEALTH;
+			Locator.mainStage.addChild(model);
+			model.x = x;
+			model.y = y;
+			model.scaleX = model.scaleY = C.GAME_SCALE;
 			
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN,keyDown);
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP,keyUp);
@@ -46,7 +80,7 @@ package
 		
 		public function update(xEnemy:int):void
 		{
-			animate();
+			animationControl();
 			applyGravity();
 			move(xEnemy);
 			view(xEnemy);
@@ -120,33 +154,33 @@ package
 		{
 			if (left && !isPunching && !isKicking && !isCrouching)
 			{
-				if (graphic.x <= 20)
+				if (model.x <= 20)
 				{
-					graphic.x = 20;
+					model.x = 20;
 				}
-				else if (graphic.scaleX == -C.GAME_SCALE && graphic.x <= xEnemy + C.ENEMY_DISTANCE && !isJumping)
+				else if (model.scaleX == -C.GAME_SCALE && model.x <= xEnemy + C.ENEMY_DISTANCE && !isJumping)
 				{
-					graphic.x = xEnemy + C.ENEMY_DISTANCE;	
+					model.x = xEnemy + C.ENEMY_DISTANCE;	
 				}
 				else
 				{
-					graphic.x -= 	C.PLAYER_SPEED;	
+					model.x -= 	speed;	
 				}
 			}
 			
 			else if (right && !isPunching && !isKicking && !isCrouching)
 			{
-				if (graphic.x >= Locator.mainStage.stageWidth - 20)
+				if (model.x >= Locator.mainStage.stageWidth - 20)
 				{
-					graphic.x = Locator.mainStage.stageWidth - 20;
+					model.x = Locator.mainStage.stageWidth - 20;
 				}
-				else if (graphic.scaleX == C.GAME_SCALE && graphic.x >= xEnemy - C.ENEMY_DISTANCE && !isJumping)
+				else if (model.scaleX == C.GAME_SCALE && model.x >= xEnemy - C.ENEMY_DISTANCE && !isJumping)
 				{
-					graphic.x = xEnemy - C.ENEMY_DISTANCE;
+					model.x = xEnemy - C.ENEMY_DISTANCE;
 				}
 				else
 				{
-					graphic.x += C.PLAYER_SPEED;	
+					model.x += speed;	
 				}
 			}
 		}
@@ -154,31 +188,31 @@ package
 		private function applyGravity():void
 		{
 			velocityY -= C.GRAVITY;
-			graphic.y -= velocityY;
-			if(graphic.y >= floorY)
+			model.y -= velocityY;
+			if(model.y >= floorY)
 			{
-				graphic.y = floorY;
+				model.y = floorY;
 				velocityY = 0;
 				isJumping = false;
 			}
 		}
 		
-		private function animate():void
+		private function animationControl():void
 		{
 			if ((left || right) && !isWalking && !isJumping && !punchingAnimation && !kickingAnimation && !isCrouching)
 			{
-				graphic.gotoAndPlay("walk");
+				model.gotoAndPlay("walk");
 				isWalking = true;
 			}
 			if (jumpingAnimation)
 			{
-				graphic.gotoAndPlay("jump");
+				model.gotoAndPlay("jump");
 				jumpingAnimation = false;
 				isWalking = false;
 			}
 			if (isPunching && !punchingAnimation && !isJumping && !isCrouching)
 			{
-				graphic.gotoAndPlay("punch");
+				model.gotoAndPlay("punch");
 				punchingAnimation = true;
 				isWalking = false;
 				
@@ -186,7 +220,7 @@ package
 			}
 			if (isKicking && !kickingAnimation && !isPunching && !isJumping && !isCrouching)
 			{
-				graphic.gotoAndPlay("kick");
+				model.gotoAndPlay("kick");
 				kickingAnimation = true;
 				isWalking = false;
 				
@@ -196,19 +230,19 @@ package
 			{
 				if (isPunching && !punchingAnimation)
 				{
-					graphic.gotoAndPlay("crouch_punch");
+					model.gotoAndPlay("crouch_punch");
 					punchingAnimation = true;
 					timerPunch = setInterval(stopPunch, C.PUNCH_DELAY);
 				}
 				else if (isKicking && !kickingAnimation)
 				{
-					graphic.gotoAndPlay("crouch_kick");
+					model.gotoAndPlay("crouch_kick");
 					kickingAnimation = true;
 					timerKick = setInterval(stopKick, C.KICK_DELAY);
 				}
 				else if (!punchingAnimation && !kickingAnimation && !crouchAnimation)
 				{
-					graphic.gotoAndStop("crouch");
+					model.gotoAndStop("crouch");
 					crouchAnimation = true;
 				}
 				isWalking = false;
@@ -216,9 +250,9 @@ package
 			if (damage && !damageAnimation && !isJumping)
 			{
 				if (!isCrouching) 
-					graphic.gotoAndPlay("standing_damage");
+					model.gotoAndPlay("standing_damage");
 				else 
-					graphic.gotoAndPlay("crouch_damage");
+					model.gotoAndPlay("crouch_damage");
 				
 				damageAnimation = true;
 				timerDamage = setInterval(stopDamage, 250);
@@ -226,7 +260,7 @@ package
 			
 			if (!left && !right && !isJumping && !isPunching && !isKicking && !isCrouching && !damageAnimation)
 			{
-				graphic.gotoAndPlay("idle");
+				model.gotoAndPlay("idle");
 				isWalking = false;
 			}
 		}
@@ -254,25 +288,25 @@ package
 		
 		public function view(x:int):void
 		{
-			if (graphic.x > x - 20 && graphic.scaleX != -C.GAME_SCALE)
+			if (model.x > x - 20 && model.scaleX != -C.GAME_SCALE)
 			{
-				graphic.scaleX = -C.GAME_SCALE;
-				graphic.x += graphic.width/2;
+				model.scaleX = -C.GAME_SCALE;
+				model.x += model.width/2;
 			}
-			else if (graphic.x <= x && graphic.scaleX != C.GAME_SCALE)
+			else if (model.x <= x && model.scaleX != C.GAME_SCALE)
 			{
-				graphic.scaleX = C.GAME_SCALE;
-				graphic.x -= graphic.width/2;
+				model.scaleX = C.GAME_SCALE;
+				model.x -= model.width/2;
 			}
 		}
 		
 		public function destroy():void
 		{
-			if(graphic.parent != null)
+			if(model.parent != null)
 			{
 				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN,keyDown);
 				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP,keyUp);
-				Locator.mainStage.removeChild(graphic);
+				Locator.mainStage.removeChild(model);
 				
 				left = false;
 				right = false;
@@ -292,6 +326,7 @@ package
 				damageAnimation = false;
 
 				velocityY = 0;
+				health = C.PLAYER_MAX_HEALTH;
 			}
 		}
 	}

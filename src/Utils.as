@@ -2,7 +2,7 @@
 {
 	public class Utils
 	{
-		// Clamp number between twon boundries
+		// Clamps number between two boundaries
 		public static function clamp(val:Number, min:Number, max:Number):Number
 		{
 			if (min > val)
@@ -29,19 +29,19 @@
 			return radians * (180 / Math.PI);
 		}
 				
-		// Get length of right angled triangle
+		// Gets length of right angled triangle
 		public static function pythagoras(currentX:Number, currentY:Number, targetX:Number, targetY:Number):Number
 		{
 			return Math.sqrt(Math.pow(Math.abs(currentX - targetX), 2) + Math.pow(Math.abs(currentY - targetY), 2));
 		}
 		
-		// Return the angle between two X Y coordinates
+		// Returns the angle between two X Y coordinates
 		public static function coordAngle(currentX:Number, currentY:Number, targetX:Number, targetY:Number):Number
 		{
 			return Math.atan2(targetY - currentY, targetX - currentX);
 		}
 		
-		// Return -1 or 1 depending on sign of the number
+		// Returns 1 or -1 depending on sign of the number
 		public static function sign(n:Number):int
 		{
 			if (n > 0)
@@ -53,15 +53,16 @@
 				return -1;
 			}
 			
-			return 0;
+			return 0;	
 		}
 		
-		// Ease number towards target
+		// Eases number towards target
 		public static function ease(current:Number, target:Number, ease:Number):Number
 		{
 			return current + (target - current) * ease;
 		}
 		
+		// Returns a random number
 		public static function random(min:int, max:int):int
 		{
 			return Math.random() * (max-min) + min;

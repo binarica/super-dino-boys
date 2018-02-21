@@ -17,7 +17,7 @@ package
 
 		}
 		
-		public function init(levNum:int):void
+		public function init(initialLevel:int):void
 		{
 			_level1 = Locator.assetManager.getGIFImage("bg1");
 			_level2 = Locator.assetManager.getGIFImage("bg2");
@@ -30,14 +30,14 @@ package
 			_level3.width = C.GAME_WIDTH;
 			_level3.height = C.GAME_HEIGHT;
 			
-			changeLevel(levNum);
+			changeLevel(initialLevel);
 		}
 		
-		public function changeLevel(levNum:int):void
+		public function changeLevel(currentLevel:int):void
 		{
 			destroy();
 			
-			switch (levNum)
+			switch (currentLevel)
 			{
 				case 1:
 					Locator.mainStage.addChild(_level1);

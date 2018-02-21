@@ -27,19 +27,21 @@ package engine
 		{
 			trace("Console OK");
 		
-			console_format = new TextFormat("Comic Sans", 24, 0x0033FF);
+			console_format = new TextFormat("Comic Sans MS", 24, 0x0033FF);
 			
 			console_log = new TextField();
 			console_log.x = 100;
 			console_log.y = 100;
 			console_log.defaultTextFormat = console_format;
 			console_log.width = C.GAME_WIDTH;
+			console_log.height = C.GAME_HEIGHT * 0.75;
 			
 			console_input = new TextField();
 			console_input.x = 100;
 			console_input.y = 800;
 			console_input.defaultTextFormat = console_format;
 			console_input.width = C.GAME_WIDTH;
+			console_input.height = C.GAME_HEIGHT * 0.25;
 			console_input.type = TextFieldType.INPUT;
 	
 			mc = new MCConsole();
@@ -47,7 +49,7 @@ package engine
 			
 			registerCommand("cls", clear, "Clears the terminal screen.");
 			registerCommand("help", help, "Give the user much needed help.");
-			registerCommand("exit", exit, "Exits the current command processor.");
+			registerCommand("exit", exit, "Exits the console.");
 			registerCommand("quit", quit, "Go back to your boring life.");
 			
 			container.addChild(mc);
@@ -73,7 +75,7 @@ package engine
 		 * @param command Comando a ejecutar.
 		 * @param description Descripción del comando. */
 		
-		public function registerCommand(name:String, command:Function, description:String="no description"):void
+		public function registerCommand(name:String, command:Function, description:String="No description"):void
 		{
 			var cData:CommandData = new CommandData();
 			cData.name = name;
@@ -90,9 +92,11 @@ package engine
 		
 		public function help():void
 		{
+			clear();
+			
 			for each(var cData:CommandData in allCommands)
 			{
-				write(cData.name + " " + cData.description);
+				write(cData.name + ": " + cData.description);
 			}
 		}
 		
@@ -147,7 +151,7 @@ package engine
 			}
 			else
 			{
-				write("Bad command or file name");
+				write("Bad command.");
 			}
 			
 			console_input.text = "";
@@ -164,6 +168,8 @@ package engine
 			{
 				isOpen ? close() : open();
 				isOpen = !isOpen;
+				
+				//Locator.mainStage.currentState
 			}
 			else if (isOpen && e.keyCode == Keyboard.ENTER)
 			{
