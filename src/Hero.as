@@ -1,6 +1,7 @@
 package
 {
 	import engine.Locator;
+	import org.flashdevelop.utils.FlashConnect;
 	
 	import flash.display.MovieClip;
 	import flash.events.KeyboardEvent;
@@ -20,7 +21,7 @@ package
 		private var timerDamage:uint;
 		private var timerCrouchPunch:uint;
 		private var timerCrouchKick:uint;
-		
+ 		
 		public function Hero()
 		{
 			model = new MovieClip();
@@ -34,7 +35,7 @@ package
 			Locator.inputManager.setRelation("Kick", Keyboard.K);	
 			
 			Locator.console.registerCommand("doublespeed", doubleSpeed, "Double speed.");
-			Locator.console.registerCommand("fly", godMode, "Fly Mode.");
+			Locator.console.registerCommand("fly", flyMode, "Fly Mode.");
 			Locator.console.registerCommand("god", godMode, "God Mode.");
 			Locator.console.registerCommand("givehealth", giveHealth, "Full health.");
 			Locator.console.registerCommand("givepowershield", givePowerShield, "Power shield.");
@@ -44,6 +45,16 @@ package
 		{
 			speed *= 2;
 			Locator.console.write("Double Speed! Yee-haw!");
+		}
+		
+		public function flyMode(status:String):void
+		{
+			if (status == "on")
+				Locator.console.write("Fly mode on");
+			else if(status == "off")
+				Locator.console.write("Fly mode off");	
+			else
+				Locator.console.write("Missing parameter");
 		}
 		
 		public function godMode(status:String):void
@@ -304,6 +315,12 @@ package
 		{
 			if(model.parent != null)
 			{
+				Locator.console.unregisterCommand("doublespeed");
+				Locator.console.unregisterCommand("fly");
+				Locator.console.unregisterCommand("god");
+				Locator.console.unregisterCommand("givehealth");
+				Locator.console.unregisterCommand("givepowershield");
+				
 				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN,keyDown);
 				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP,keyUp);
 				Locator.mainStage.removeChild(model);

@@ -3,6 +3,7 @@ package engine
 	import flash.desktop.NativeApplication;
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
+	import flash.display.StageDisplayState;
 	import flash.events.KeyboardEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldType;
@@ -27,29 +28,31 @@ package engine
 		{
 			trace("Console OK");
 		
-			console_format = new TextFormat("Comic Sans MS", 24, 0x0033FF);
+			console_format = new TextFormat("Comic Sans MS", 22, 0x0033FF);
 			
 			console_log = new TextField();
-			console_log.x = 100;
-			console_log.y = 100;
+			console_log.x = 125;
+			console_log.y = 125;
 			console_log.defaultTextFormat = console_format;
 			console_log.width = C.GAME_WIDTH;
 			console_log.height = C.GAME_HEIGHT * 0.75;
 			
 			console_input = new TextField();
-			console_input.x = 100;
-			console_input.y = 800;
+			console_input.x = 125;
+			console_input.y = 775;
 			console_input.defaultTextFormat = console_format;
 			console_input.width = C.GAME_WIDTH;
 			console_input.height = C.GAME_HEIGHT * 0.25;
 			console_input.type = TextFieldType.INPUT;
 	
 			mc = new MCConsole();
+			mc.alpha = 0.5;
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			
-			registerCommand("cls", clear, "Clears the terminal screen.");
+			registerCommand("cls", clear, "Clear the terminal screen.");
+			registerCommand("exit", exit, "Exit the console.");
+			registerCommand("fullscreen", fullscreen, "Toggle full-screen mode.");
 			registerCommand("help", help, "Give the user much needed help.");
-			registerCommand("exit", exit, "Exits the console.");
 			registerCommand("quit", quit, "Go back to your boring life.");
 			
 			container.addChild(mc);
@@ -63,7 +66,17 @@ package engine
 			close();
 			isOpen = false;
 		}
-
+		
+		public function fullscreen(status:String):void
+		{
+			if (status == "on")
+				Locator.mainStage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+			else if(status == "off")
+				Locator.mainStage.displayState = StageDisplayState.NORMAL;	
+			else
+				Locator.console.write("Bad parameter.");
+		}	
+		
 		public function quit():void
 		{
 			NativeApplication.nativeApplication.exit(0);
@@ -168,8 +181,6 @@ package engine
 			{
 				isOpen ? close() : open();
 				isOpen = !isOpen;
-				
-				//Locator.mainStage.currentState
 			}
 			else if (isOpen && e.keyCode == Keyboard.ENTER)
 			{

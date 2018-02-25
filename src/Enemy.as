@@ -19,7 +19,6 @@ package
 		//o con un array:
 		//public static const enemyNames:Array = new Array("lev1","lev2","lev3");
 		
-		
 		public var health:int = C.ENEMY_MAX_HEALTH;
 		private var timerPunch:uint;
 		private var timerKick:uint;
@@ -48,7 +47,7 @@ package
 			animationControl();
 			applyGravity();
 			move(xHero);
-			view(xHero);
+			lookAt(xHero);
 		}
 		
 		private function move(xHero:Number):void
@@ -183,7 +182,7 @@ package
 			clearInterval(timerDamage);
 		}
 		
-		public function view(x:int):void
+		public function lookAt(x:int):void
 		{
 			if (enemyList[currentLevel-1].x > x - 20 && enemyList[currentLevel-1].scaleX != -C.GAME_SCALE)
 			{
@@ -221,10 +220,10 @@ package
 			punchingAnimation = false;
 			isKicking = false;
 			kickingAnimation = false;
-			punchEnable = true;
-			kickEnable = true;
 			damage = false;
 			damageAnimation = false;
+			punchEnable = true;
+			kickEnable = true;
 			//speed = 20; por si queremos cambiar la velocidad a otros enemigos...
 			velocityY = 0;
 			health = C.ENEMY_MAX_HEALTH;

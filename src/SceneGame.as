@@ -4,23 +4,23 @@ package
 	import engine.Locator;
 	
 	import flash.display.MovieClip;
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
 	import flash.utils.*;
-	
+		
 	import org.bytearray.gif.player.GIFPlayer;
 
 	public class SceneGame extends CustomScene
 	{
-		/*
-		public static var PAUSED:String = "paused"; // For pause menu
-		public static var PLAYING:String = "playing";// For playing state
-		public static var START:String = "start";// For start menu
-		public static var RESTART:String = "restart";// For restart menu
-		public static var SILENT_RESTART:String = "silent_restart";// For restart without menu
+		Locator.inputManager.setRelation("Pause", Keyboard.P);
+	
+		public static var PAUSED:String = "paused";						// For pause menu
+		public static var PLAYING:String = "playing";					// For playing state
+		public static var START:String = "start";						// For start menu
+		public static var RESTART:String = "restart";					// For restart menu
+		public static var STAGE_END:String = "stage end";
 		
-		public static var currentState = "start";
-		*/
-		
-		private var gameStarted:Boolean = false;
+		public static var currentState:String = "start";
 		
 		private var level:Level = new Level();
 		
@@ -39,6 +39,8 @@ package
 		
 		private var hud:HUD = new HUD();
 		private var restartTime:int;
+		
+		private var hitStopFPS:Number = 0;
 		
 		private var currentLevel:int = 1;
 		
@@ -61,8 +63,7 @@ package
 		override public function enter():void
 		{	
 			currentLevel = 1;
-			
-			gameStarted = true;
+			currentState = PLAYING;
 			
 			level.init(currentLevel);
 			hud.init(currentLevel);
@@ -80,22 +81,46 @@ package
 			finish = Locator.assetManager.getMovieClip("Final");
 			
 			Locator.soundManager.play(SoundID.FIGHTING, C.ENV_VOLUME, 99999);
+			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN,keyDown);
+			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP,keyUp);
 		}
 		
 		override public function update():void
 		{
-			if (gameStarted)
+			currentState = Locator.console.isOpen ?  PAUSED : PLAYING;
+			
+			switch (currentState)
 			{
-			hero.update(enemy.enemyList[currentLevel-1].x);
-				enemy.update(hero.model.x);
-				
-				playerCollisionDetector();
-				enemyCollisionDetector();
-				behaviors.update();
-				
-				checkVictory();
-				
-				hud.update(hero.health, C.PLAYER_MAX_HEALTH, enemy.health, C.ENEMY_MAX_HEALTH);
+				case PAUSED:
+					hero.model.stop();
+					enemy.enemyList[currentLevel - 1].stop();
+					
+					/* //PSEUDOCODE
+					if (keys.KeyP)
+					{
+					   keys.KeyP = false; // turn off key
+					   currentState = game;   // resume game
+					}
+					*/
+					
+					break;
+				case PLAYING:
+					hero.update(enemy.enemyList[currentLevel - 1].x);
+					enemy.update(hero.model.x);
+					hud.update(hero.health, C.PLAYER_MAX_HEALTH, enemy.health, C.ENEMY_MAX_HEALTH);
+					
+					playerCollisionDetector();
+					enemyCollisionDetector();
+					
+					if (heroHit || enemyHit)
+					{
+						//hitStop();
+					}
+					
+					behaviors.update();
+					
+					checkVictory();
+					break;
 			}
 		}
 		
@@ -188,11 +213,28 @@ package
 			}
 		}
 		
+		private function hitStop():void
+		{
+			if (currentState = PLAYING)
+			{
+				while (hitStopFPS < C.GAME_FPS)
+				{
+					Locator.mainStage.frameRate = hitStopFPS;
+					hitStopFPS += C.GAME_FPS / 500;
+					
+					trace("I'm in this loop y'know, " + hitStopFPS);
+				}
+				
+				hitStopFPS = 0;
+			}
+		}
+		
 		private function checkVictory():void
 		{
 			if(hero.health <= 0)
 			{
-				gameStarted = false;
+				currentState = STAGE_END;
+				Locator.mainStage.frameRate = C.GAME_FPS;
 				
 				hero.model.gotoAndPlay("idle");
 				hero.model.gotoAndPlay("death");
@@ -206,7 +248,6 @@ package
 				enemy.enemyList[currentLevel-1].gotoAndPlay("idle");
 				
 				setTimeout(function():void {
-					//Main.soundPlayer.Play(SoundManager.YOU_LOSE, C.SOUND_FX_VOLUME, 0); //"you lose!"
 					Locator.soundManager.play(SoundID.YOU_LOSE, C.SOUND_FX_VOLUME, 0);				
 					Locator.mainStage.addChild(finish);
 					finish.gotoAndStop("Defeat");
@@ -219,9 +260,10 @@ package
 			
 			else if (enemy.health <= 0)
 			{
-				gameStarted = false;
+				currentState = STAGE_END;
+				Locator.mainStage.frameRate = C.GAME_FPS;
 				
-			hero.model.gotoAndPlay("idle");
+				hero.model.gotoAndPlay("idle");
 				enemy.enemyList[currentLevel-1].gotoAndPlay("death");
 				
 				if (enemy.enemyList[currentLevel-1].scaleX == C.GAME_SCALE) 
@@ -238,6 +280,7 @@ package
 					
 					Locator.soundManager.play(SoundID.YOU_WIN, C.SOUND_FX_VOLUME, 0);
 					Locator.soundManager.play(SoundID.ENEMY_DEATH, C.SOUND_FX_VOLUME, 0);
+					
 					restartTime = setInterval(function():void {
 						loadLevel(++currentLevel);
 					}, 5000);
@@ -280,7 +323,7 @@ package
 			if (finish.parent != null)
 				finish.parent.removeChild(finish);
 			
-			gameStarted = true;
+			currentState = PLAYING;
 			
 			if (Locator.console.isOpen)
 				Locator.console.exit();
@@ -294,6 +337,27 @@ package
 			enemy.destroy();
 		}
 		*/
+		
+		private function keyDown(e:KeyboardEvent):void
+		{
+			switch(e.keyCode)
+			{
+				case Keyboard.P:
+					currentState = PAUSED;
+					break;
+			}	
+		}
+		
+		private function keyUp(e:KeyboardEvent):void
+		{
+			switch(e.keyCode)
+			{
+				case Keyboard.P:
+					currentState = PLAYING;
+					break;
+			}
+		}
+		
 		
 		private function kill():void
 		{
@@ -312,15 +376,25 @@ package
 		{			
 			clearInterval(restartTime);
 			
+			Locator.console.unregisterCommand("kill");
+			Locator.console.unregisterCommand("reset");
+			Locator.console.unregisterCommand("loadlevel");
+			
 			hero.destroy();
 			enemy.destroy();
 			hud.destroy();
 			level.destroy();
 			
-			if(finish.parent != null)
+			if (finish.parent != null) 
+			{	
 				finish.parent.removeChild(finish);
-				
-			Locator.mainStage.removeChild(ending);
+			}
+			
+			if (ending.parent != null) 
+			{
+				ending.parent.removeChild(ending);
+			}
+			
 			Locator.soundManager.stopAllSounds();
 		}
 	}

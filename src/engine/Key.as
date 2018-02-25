@@ -8,7 +8,7 @@ package engine
 		public var wasPressed:Boolean;
 		public var wasReleased:Boolean;
 		
-		public var speed:Number=0.01;
+		public var speed:Number = 0.01;
 		public var currentSpeed:Number = 0;
 		
 		public function Key()
