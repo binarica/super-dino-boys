@@ -1,4 +1,4 @@
-# Super-Dino-Boys
+# Super Dino Boys
 Beat-em-up fighting game made in Flash AS3
 <br><br>
 Art by Paul Robertson - http://probertson.tumblr.com/ <br>
