@@ -12,8 +12,6 @@ package
 
 	public class SceneGame extends CustomScene
 	{
-		Locator.inputManager.setRelation("Pause", Keyboard.P);
-	
 		public static var PAUSED:String = "paused";						// For pause menu
 		public static var PLAYING:String = "playing";					// For playing state
 		public static var START:String = "start";						// For start menu
@@ -44,7 +42,7 @@ package
 		
 		private var currentLevel:int = 1;
 		
-		private var ending:GIFPlayer = new GIFPlayer();
+		private var ending:GIFPlayer;
 		
 		public static var score:int = 0;
 		public static var highscore:int = 0;
@@ -52,8 +50,8 @@ package
 		public function SceneGame()
 		{
 			super("");
-			
-			ending = Locator.assetManager.getGIFImage("win");
+				
+			Locator.inputManager.setRelation("Pause", Keyboard.P);
 			
 			Locator.console.registerCommand("kill", kill, "Restart current level with original health.");
 			Locator.console.registerCommand("reset", resetGame, "Reset the game.");
@@ -80,31 +78,22 @@ package
 			finish = new MovieClip();
 			finish = Locator.assetManager.getMovieClip("Final");
 			
+			ending = new GIFPlayer();
+			ending = Locator.assetManager.getGIFImage("win");
+			
 			Locator.soundManager.play(SoundID.FIGHTING, C.ENV_VOLUME, 99999);
-			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN,keyDown);
-			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP,keyUp);
 		}
 		
 		override public function update():void
 		{
-			currentState = Locator.console.isOpen ?  PAUSED : PLAYING;
-			
 			switch (currentState)
 			{
-				case PAUSED:
-					hero.model.stop();
-					enemy.enemyList[currentLevel - 1].stop();
-					
-					/* //PSEUDOCODE
-					if (keys.KeyP)
-					{
-					   keys.KeyP = false; // turn off key
-					   currentState = game;   // resume game
-					}
-					*/
-					
-					break;
 				case PLAYING:
+					if (Locator.console.isOpen) 
+					{
+						currentState = PAUSED;
+					}
+					
 					hero.update(enemy.enemyList[currentLevel - 1].x);
 					enemy.update(hero.model.x);
 					hud.update(hero.health, C.PLAYER_MAX_HEALTH, enemy.health, C.ENEMY_MAX_HEALTH);
@@ -114,12 +103,23 @@ package
 					
 					if (heroHit || enemyHit)
 					{
-						//hitStop();
+						hitStop();
 					}
 					
 					behaviors.update();
 					
 					checkVictory();
+					break;
+							
+				case PAUSED:
+					if (!Locator.console.isOpen) 
+					{
+						currentState = PLAYING;
+					}
+
+					hero.model.stop();
+					enemy.enemyList[currentLevel - 1].stop();
+
 					break;
 			}
 		}
@@ -160,9 +160,12 @@ package
 						break;
 				}
 				
-				if(!enemy.isJumping) 
+				if (!enemy.isJumping)
+				{
 					enemy.damage = true;
+				}
 			}
+			
 			if(heroHit && !hero.isPunching && !hero.isKicking)
 			{
 				heroHit = false;
@@ -178,33 +181,37 @@ package
 				switch(code)
 				{
 					case "UpperPunch":
-					hero.health -= C.HIGH_PUNCH_DAMAGE;
+						hero.health -= C.HIGH_PUNCH_DAMAGE;
 						Locator.soundManager.play(SoundID.PUNCH_ENEMY, C.SOUND_FX_VOLUME, 0);
 						enemyHit = true;
 						break;
 					case "LowerPunch":
 						if(!hero.isJumping)
 						{
-						hero.health -= C.LOW_PUNCH_DAMAGE;
+							hero.health -= C.LOW_PUNCH_DAMAGE;
 							Locator.soundManager.play(SoundID.PUNCH_ENEMY, C.SOUND_FX_VOLUME, 0);
 							enemyHit = true;	
 						}
 						break;
 					case "UpperKick":
-					hero.health -= C.HIGH_KICK_DAMAGE;
+						hero.health -= C.HIGH_KICK_DAMAGE;
 						Locator.soundManager.play(SoundID.KICK_ENEMY, C.SOUND_FX_VOLUME, 0);
 						enemyHit = true;
 						break;
 					case "LowerKick":
 						if(!hero.isJumping)
 						{
-						hero.health -= C.LOW_KICK_DAMAGE;
+							hero.health -= C.LOW_KICK_DAMAGE;
 							Locator.soundManager.play(SoundID.KICK_ENEMY, C.SOUND_FX_VOLUME, 0);
 							enemyHit = true;	
 						}
 						break;
 				}
-				if(!hero.isJumping) hero.damage = true;
+				
+				if (!hero.isJumping) 
+				{
+					hero.damage = true;
+				}
 			}
 			
 			if(enemyHit && !enemy.isPunching && !enemy.isKicking)
@@ -212,11 +219,12 @@ package
 				enemyHit = false;
 			}
 		}
-		
+				
 		private function hitStop():void
 		{
-			if (currentState = PLAYING)
+			if (currentState == PLAYING)
 			{
+				/*
 				while (hitStopFPS < C.GAME_FPS)
 				{
 					Locator.mainStage.frameRate = hitStopFPS;
@@ -226,15 +234,15 @@ package
 				}
 				
 				hitStopFPS = 0;
+				*/
 			}
 		}
 		
 		private function checkVictory():void
 		{
-			if(hero.health <= 0)
+			if (hero.health <= 0)
 			{
 				currentState = STAGE_END;
-				Locator.mainStage.frameRate = C.GAME_FPS;
 				
 				hero.model.gotoAndPlay("idle");
 				hero.model.gotoAndPlay("death");
@@ -257,11 +265,9 @@ package
 		
 				restartTime = setInterval(resetGame,4000);
 			}
-			
 			else if (enemy.health <= 0)
 			{
 				currentState = STAGE_END;
-				Locator.mainStage.frameRate = C.GAME_FPS;
 				
 				hero.model.gotoAndPlay("idle");
 				enemy.enemyList[currentLevel-1].gotoAndPlay("death");
@@ -285,7 +291,6 @@ package
 						loadLevel(++currentLevel);
 					}, 5000);
 				}
-				
 				else
 				{
 					hud.destroy();
@@ -321,12 +326,16 @@ package
 			hud.init(newLevel);
 			
 			if (finish.parent != null)
+			{
 				finish.parent.removeChild(finish);
+			}
 			
-			currentState = PLAYING;
-			
-			if (Locator.console.isOpen)
+			if (Locator.console.isOpen) 
+			{	
 				Locator.console.exit();
+			}
+				
+			currentState = PLAYING;
 		}
 		
 		/*
@@ -337,17 +346,7 @@ package
 			enemy.destroy();
 		}
 		*/
-		
-		private function keyDown(e:KeyboardEvent):void
-		{
-			switch(e.keyCode)
-			{
-				case Keyboard.P:
-					currentState = PAUSED;
-					break;
-			}	
-		}
-		
+				
 		private function keyUp(e:KeyboardEvent):void
 		{
 			switch(e.keyCode)
@@ -357,7 +356,6 @@ package
 					break;
 			}
 		}
-		
 		
 		private function kill():void
 		{

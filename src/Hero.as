@@ -21,16 +21,18 @@ package
 		private var timerDamage:uint;
 		private var timerCrouchPunch:uint;
 		private var timerCrouchKick:uint;
+		
+		public var cheatCode:Array = [Keyboard.I, Keyboard.D, Keyboard.D, Keyboard.Q, Keyboard.D];
  		
 		public function Hero()
 		{
 			model = new MovieClip();
 			model = Locator.assetManager.getMovieClip("Dino");
 			
-			Locator.inputManager.setRelation("Up", Keyboard.W);
-			Locator.inputManager.setRelation("Down", Keyboard.S);
 			Locator.inputManager.setRelation("Left", Keyboard.A);
 			Locator.inputManager.setRelation("Right", Keyboard.D);
+			Locator.inputManager.setRelation("Up", Keyboard.W);
+			Locator.inputManager.setRelation("Down", Keyboard.S);
 			Locator.inputManager.setRelation("Punch", Keyboard.J);
 			Locator.inputManager.setRelation("Kick", Keyboard.K);	
 			
@@ -44,7 +46,7 @@ package
 		public function doubleSpeed():void
 		{
 			speed *= 2;
-			Locator.console.write("Double Speed! Yee-haw!");
+			Locator.console.write("Double speed! Yee-haw!");
 		}
 		
 		public function flyMode(status:String):void
@@ -75,7 +77,7 @@ package
 		
 		public function givePowerShield():void
 		{
-			trace("super mega fokken power shield");
+			Locator.console.write("Super mega fokken power shield!!1!");
 		}
 		
 		override public function spawn(x:int, y:int):void
@@ -84,80 +86,75 @@ package
 			model.x = x;
 			model.y = y;
 			model.scaleX = model.scaleY = C.GAME_SCALE;
-			
-			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN,keyDown);
-			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP,keyUp);
 		}
 		
 		public function update(xEnemy:int):void
 		{
 			animationControl();
 			applyGravity();
+			checkKeys();
+			
 			move(xEnemy);
 			view(xEnemy);
 		}
 		
-		private function keyDown(e:KeyboardEvent):void
+		private function checkKeys():void 
 		{
-			switch(e.keyCode)
+			if(Locator.inputManager.compareSequence(cheatCode))
 			{
-				case Keyboard.A:
-					left = true;
-					break;
-				case Keyboard.D:
-					right = true;
-					break;
-				case Keyboard.W:
-					if(!isJumping && !isCrouching)
-					{
-						velocityY = C.PLAYER_JUMP_FORCE;
-						isJumping = true;
-						jumpingAnimation = true;
-					}
-					break;
-				case Keyboard.S:
-					if(!isJumping && !isCrouching)
-					{
-						isCrouching = true;
-					}
-					break;
-				case Keyboard.J:
-					if(!isJumping && punchEnable)
-					{
-						isPunching = true;
-						punchEnable = false;
-					}
-					break;
-				case Keyboard.K:
-					if(!isJumping && kickEnable)
-					{
-						isKicking = true;
-						kickEnable = false;
-					}
-					break;
-			}	
-		}
-		
-		private function keyUp(e:KeyboardEvent):void
-		{
-			switch(e.keyCode)
+				trace("Something something dark side");
+			}
+			
+			left = Locator.inputManager.getKeyPressingByName("Left");
+			right = Locator.inputManager.getKeyPressingByName("Right");
+			
+			if (Locator.inputManager.getKeyPressingByName("Up")) 
 			{
-				case Keyboard.A:
-					left = false;
-					break;
-				case Keyboard.D:
-					right = false;
-					break;
-				case Keyboard.S:
-					isCrouching = false;
-					crouchAnimation = false;
-					break;
-				case Keyboard.J:
-					punchEnable = true;
-					break;
-				case Keyboard.K:
-					kickEnable = true;
-					break;
+				if (!isJumping && !isCrouching)
+				{
+					velocityY = C.PLAYER_JUMP_FORCE;
+					isJumping = true;
+					jumpingAnimation = true;
+				}
+			}
+			
+			if (Locator.inputManager.getKeyPressingByName("Down"))
+			{
+				if (!isJumping && !isCrouching)
+				{
+					isCrouching = true;
+				}
+			}
+			else
+			{
+				isCrouching = false;
+				crouchAnimation = false;
+			}
+			
+			if (Locator.inputManager.getKeyPressingByName("Punch"))
+			{
+				if(!isJumping && punchEnable)
+				{
+					isPunching = true;
+					punchEnable = false;
+				}
+			}
+			else
+			{
+				punchEnable = true;
+			}
+			
+			if (Locator.inputManager.getKeyPressingByName("Kick"))
+			{
+				if(!isJumping && kickEnable)
+				{
+					isKicking = true;
+					kickEnable = false;
+				}
+			}
+			else
+			{
+				kickEnable = true;
 			}
 		}
 		
@@ -260,10 +257,7 @@ package
 			}
 			if (damage && !damageAnimation && !isJumping)
 			{
-				if (!isCrouching) 
-					model.gotoAndPlay("standing_damage");
-				else 
-					model.gotoAndPlay("crouch_damage");
+				isCrouching ? model.gotoAndPlay("crouch_damage") : model.gotoAndPlay("standing_damage");
 				
 				damageAnimation = true;
 				timerDamage = setInterval(stopDamage, 250);
@@ -311,9 +305,9 @@ package
 			}
 		}
 		
-		public function destroy():void
+		override public function destroy():void
 		{
-			if(model.parent != null)
+			if (model.parent != null)
 			{
 				Locator.console.unregisterCommand("doublespeed");
 				Locator.console.unregisterCommand("fly");
@@ -321,8 +315,6 @@ package
 				Locator.console.unregisterCommand("givehealth");
 				Locator.console.unregisterCommand("givepowershield");
 				
-				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN,keyDown);
-				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP,keyUp);
 				Locator.mainStage.removeChild(model);
 				
 				left = false;

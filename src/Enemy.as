@@ -229,7 +229,7 @@ package
 			health = C.ENEMY_MAX_HEALTH;
 		}
 		
-		public function destroy():void
+		override public function destroy():void
 		{
 			for (var i:int = 0; i < enemyList.length; i++) 
 			{

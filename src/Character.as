@@ -32,6 +32,12 @@ package
 		public function spawn(x:int, y:int):void
 		{
 
-		}		
+		}
+		
+		public function destroy():void
+		{
+
+		}
+		
 	}
 }
