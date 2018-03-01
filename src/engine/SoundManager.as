@@ -5,10 +5,11 @@ package engine
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
 	import flash.media.SoundTransform;
+	import flash.media.SoundMixer;
 	import flash.net.URLRequest;
 	
 	public class SoundManager
-	{
+	{		
 		private var sounds:Vector.<Sound> = new Vector.<Sound>();
 		private var urls:Vector.<URLRequest> = new Vector.<URLRequest>();
 		private var channels:Vector.<SoundChannel> = new Vector.<SoundChannel>();
@@ -61,6 +62,16 @@ package engine
 		public function stop(id:int):void
 		{
 			channels[id].stop();
+		}
+		
+		public function muteSound():void
+		{
+			SoundMixer.soundTransform = new SoundTransform(0);
+		}
+		
+		public function unMuteSound():void
+		{
+			SoundMixer.soundTransform = new SoundTransform(1);
 		}
 		
 		public function stopAllSounds():void

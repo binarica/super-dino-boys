@@ -21,6 +21,7 @@ package
 			
 			Locator.sceneManager.registerScene("Menu", SceneMenu);
 			Locator.sceneManager.registerScene("Game", SceneGame);
+			Locator.sceneManager.registerScene("Options", SceneOptions);
 			Locator.sceneManager.registerScene("Tutorial", SceneTutorial);
 			
 			Locator.sceneManager.loadScene("Menu");			

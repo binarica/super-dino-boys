@@ -2,8 +2,10 @@ package
 {
 	public class Character
 	{
+		public var gravity:Number = C.GRAVITY;
+		public var floorY:int = C.FLOOR_Y;
+		
 		public var velocityY:int = 0;
-		public var floorY:int = 800;
 		
 		public var left:Boolean = false;
 		public var right:Boolean = false;

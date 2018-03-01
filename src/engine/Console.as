@@ -28,7 +28,7 @@ package engine
 		{
 			trace("Console OK");
 		
-			console_format = new TextFormat("Comic Sans MS", 22, 0x0033FF);
+			console_format = new TextFormat("Comic Sans MS", 22, 0x4B0082);
 			
 			console_log = new TextField();
 			console_log.x = 125;

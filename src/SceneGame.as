@@ -12,10 +12,10 @@ package
 
 	public class SceneGame extends CustomScene
 	{
-		public static var PAUSED:String = "paused";						// For pause menu
-		public static var PLAYING:String = "playing";					// For playing state
-		public static var START:String = "start";						// For start menu
-		public static var RESTART:String = "restart";					// For restart menu
+		public static var PAUSED:String = "paused";			// For pause menu
+		public static var PLAYING:String = "playing";		// For playing state
+		public static var START:String = "start";			// For start menu
+		public static var RESTART:String = "restart";		// For restart menu
 		public static var STAGE_END:String = "stage end";
 		
 		public static var currentState:String = "start";
@@ -31,7 +31,8 @@ package
 		private var heroHit:Boolean = false;
 		private var enemyHit:Boolean = false;
 		
-		private var finish:MovieClip;
+		private var win:MovieClip;
+		private var lose:MovieClip;
 		
 		private var behaviors:Behaviors;
 		
@@ -53,9 +54,11 @@ package
 				
 			Locator.inputManager.setRelation("Pause", Keyboard.P);
 			
+			Locator.console.registerCommand("mute", mute, "Mute sound.");
 			Locator.console.registerCommand("kill", kill, "Restart current level with original health.");
 			Locator.console.registerCommand("reset", resetGame, "Reset the game.");
 			Locator.console.registerCommand("loadlevel", loadLevel, "Go to level #.");
+			Locator.console.registerCommand("armageddon", suddenDeath, "Sudden death.");
 		}
 		
 		override public function enter():void
@@ -74,12 +77,15 @@ package
 			
 			behaviors = new Behaviors(enemy,hero);
 			behaviors.changeEnemy(currentLevel);
-			
-			finish = new MovieClip();
-			finish = Locator.assetManager.getMovieClip("Final");
+						
+			win = new MovieClip();
+			win = Locator.assetManager.getMovieClip("YouWin");
+
+			lose = new MovieClip();
+			lose = Locator.assetManager.getMovieClip("YouLose");
 			
 			ending = new GIFPlayer();
-			ending = Locator.assetManager.getGIFImage("win");
+			ending = Locator.assetManager.getGIFImage("end");
 			
 			Locator.soundManager.play(SoundID.FIGHTING, C.ENV_VOLUME, 99999);
 		}
@@ -100,11 +106,6 @@ package
 					
 					playerCollisionDetector();
 					enemyCollisionDetector();
-					
-					if (heroHit || enemyHit)
-					{
-						hitStop();
-					}
 					
 					behaviors.update();
 					
@@ -168,6 +169,10 @@ package
 			
 			if(heroHit && !hero.isPunching && !hero.isKicking)
 			{
+				/*
+				var h:Hitspark = new Hitspark();
+				h.spawn(hero.model.x, hero.model.y);
+				*/
 				heroHit = false;
 			}
 		}
@@ -216,34 +221,21 @@ package
 			
 			if(enemyHit && !enemy.isPunching && !enemy.isKicking)
 			{
+				/*
+				var h:Hitspark = new Hitspark();
+				h.spawn(enemy[currentLevel - 1].x, enemy[currentLevel - 1].y);	
+				*/
 				enemyHit = false;
 			}
 		}
-				
-		private function hitStop():void
-		{
-			if (currentState == PLAYING)
-			{
-				/*
-				while (hitStopFPS < C.GAME_FPS)
-				{
-					Locator.mainStage.frameRate = hitStopFPS;
-					hitStopFPS += C.GAME_FPS / 500;
-					
-					trace("I'm in this loop y'know, " + hitStopFPS);
-				}
-				
-				hitStopFPS = 0;
-				*/
-			}
-		}
-		
+						
 		private function checkVictory():void
 		{
 			if (hero.health <= 0)
 			{
 				currentState = STAGE_END;
 				
+				enemy.enemyList[currentLevel-1].gotoAndPlay("idle");
 				hero.model.gotoAndPlay("idle");
 				hero.model.gotoAndPlay("death");
 				
@@ -252,18 +244,14 @@ package
 				else if (hero.model.scaleX == -C.GAME_SCALE) 
 				hero.model.x += 30;
 				
-				Locator.soundManager.play(SoundID.PLAYER_DEATH, C.SOUND_FX_VOLUME, 0);
-				enemy.enemyList[currentLevel-1].gotoAndPlay("idle");
+				Locator.mainStage.addChild(lose);
+				lose.x = Locator.mainStage.stageWidth / 2;
+				lose.y = 220;
 				
-				setTimeout(function():void {
-					Locator.soundManager.play(SoundID.YOU_LOSE, C.SOUND_FX_VOLUME, 0);				
-					Locator.mainStage.addChild(finish);
-					finish.gotoAndStop("Defeat");
-					finish.x = Locator.mainStage.stageWidth / 2;
-					finish.y = 200;
-				}, 500);
-		
-				restartTime = setInterval(resetGame,4000);
+				Locator.soundManager.play(SoundID.YOU_LOSE, C.SOUND_FX_VOLUME, 0);	
+				Locator.soundManager.play(SoundID.PLAYER_DEATH, C.SOUND_FX_VOLUME, 0);
+				
+				restartTime = setInterval(resetGame, 4000);
 			}
 			else if (enemy.health <= 0)
 			{
@@ -279,10 +267,9 @@ package
 				
 				if (currentLevel < 3)
 				{
-					Locator.mainStage.addChild(finish);
-					finish.gotoAndStop("Victory");
-					finish.x = Locator.mainStage.stageWidth / 2;
-					finish.y = 200;
+					Locator.mainStage.addChild(win);
+					win.x = Locator.mainStage.stageWidth / 2;
+					win.y = 200;
 					
 					Locator.soundManager.play(SoundID.YOU_WIN, C.SOUND_FX_VOLUME, 0);
 					Locator.soundManager.play(SoundID.ENEMY_DEATH, C.SOUND_FX_VOLUME, 0);
@@ -306,7 +293,7 @@ package
 						ending.y = 200;
 					}, 2500);
 					
-					restartTime = setInterval(resetGame, 15000);
+					restartTime = setInterval(resetGame, 10000);
 				}
 			}
 		}
@@ -325,9 +312,14 @@ package
 			behaviors.changeEnemy(newLevel);
 			hud.init(newLevel);
 			
-			if (finish.parent != null)
-			{
-				finish.parent.removeChild(finish);
+			if (win.parent != null) 
+			{	
+				win.parent.removeChild(win);
+			}
+			
+			if (lose.parent != null) 
+			{	
+				lose.parent.removeChild(lose);
 			}
 			
 			if (Locator.console.isOpen) 
@@ -336,6 +328,12 @@ package
 			}
 				
 			currentState = PLAYING;
+		}
+		
+		public function suddenDeath():void
+		{
+			hero.health = 1;
+			enemy.health = 1;
 		}
 		
 		/*
@@ -357,6 +355,16 @@ package
 			}
 		}
 		
+		public function mute(status:String):void
+		{
+			if (status == "on")
+				Locator.soundManager.muteSound();
+			else if(status == "off")
+				Locator.soundManager.unMuteSound();	
+			else
+				Locator.console.write("Missing parameter");
+		}
+		
 		private function kill():void
 		{
 			loadLevel(currentLevel);
@@ -374,18 +382,25 @@ package
 		{			
 			clearInterval(restartTime);
 			
+			Locator.console.unregisterCommand("mute");
 			Locator.console.unregisterCommand("kill");
 			Locator.console.unregisterCommand("reset");
 			Locator.console.unregisterCommand("loadlevel");
+			Locator.console.unregisterCommand("armageddon");
 			
 			hero.destroy();
 			enemy.destroy();
 			hud.destroy();
 			level.destroy();
-			
-			if (finish.parent != null) 
+					
+			if (win.parent != null) 
 			{	
-				finish.parent.removeChild(finish);
+				win.parent.removeChild(win);
+			}
+			
+			if (lose.parent != null) 
+			{	
+				lose.parent.removeChild(lose);
 			}
 			
 			if (ending.parent != null) 

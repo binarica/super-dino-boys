@@ -86,7 +86,7 @@ package
 		
 		private function applyGravity():void
 		{
-			velocityY -= C.GRAVITY;
+			velocityY -= gravity;
 			enemyList[currentLevel-1].y -= velocityY;
 			if (enemyList[currentLevel-1].y >= floorY)
 			{

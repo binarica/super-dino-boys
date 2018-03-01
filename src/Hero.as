@@ -37,7 +37,7 @@ package
 			Locator.inputManager.setRelation("Kick", Keyboard.K);	
 			
 			Locator.console.registerCommand("doublespeed", doubleSpeed, "Double speed.");
-			Locator.console.registerCommand("fly", flyMode, "Fly Mode.");
+			Locator.console.registerCommand("moonwalk", moon, "No gravity.");
 			Locator.console.registerCommand("god", godMode, "God Mode.");
 			Locator.console.registerCommand("givehealth", giveHealth, "Full health.");
 			Locator.console.registerCommand("givepowershield", givePowerShield, "Power shield.");
@@ -49,14 +49,9 @@ package
 			Locator.console.write("Double speed! Yee-haw!");
 		}
 		
-		public function flyMode(status:String):void
+		public function moon():void
 		{
-			if (status == "on")
-				Locator.console.write("Fly mode on");
-			else if(status == "off")
-				Locator.console.write("Fly mode off");	
-			else
-				Locator.console.write("Missing parameter");
+			gravity = C.GRAVITY / 2;
 		}
 		
 		public function godMode(status:String):void
@@ -195,7 +190,7 @@ package
 		
 		private function applyGravity():void
 		{
-			velocityY -= C.GRAVITY;
+			velocityY -= gravity;
 			model.y -= velocityY;
 			if(model.y >= floorY)
 			{

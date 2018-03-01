@@ -9,6 +9,7 @@ package
 	public class SceneMenu extends CustomScene
 	{
 		private var start:MovieClip;
+		private var options:MovieClip;
 		private var tutorial:MovieClip;
 		
 		public function SceneMenu()
@@ -23,16 +24,25 @@ package
 			start = new MovieClip();
 			start = Locator.assetManager.getMovieClip("StartButton");
 			Locator.mainStage.addChild(start);
-			start.x = Locator.mainStage.stageWidth * 0.2;
-			start.y = Locator.mainStage.stageHeight * 0.8;
+			start.x = Locator.mainStage.stageWidth * 0.04;
+			start.y = Locator.mainStage.stageHeight * 0.84;
 			start.addEventListener(MouseEvent.MOUSE_DOWN, startDown);
 			start.addEventListener(MouseEvent.MOUSE_UP, startUp);
+			
+			options = new MovieClip();
+			options = Locator.assetManager.getMovieClip("OptionsButton");
+			Locator.mainStage.addChild(options);
+			options.x = Locator.mainStage.stageWidth * 0.34;
+			options.y = Locator.mainStage.stageHeight * 0.84;
+			options.addEventListener(MouseEvent.MOUSE_DOWN, optionsDown);
+			options.addEventListener(MouseEvent.MOUSE_UP, optionsUp);
+			
 			
 			tutorial = new MovieClip();
 			tutorial = Locator.assetManager.getMovieClip("TutorialButton");
 			Locator.mainStage.addChild(tutorial);
-			tutorial.x = Locator.mainStage.stageWidth * 0.6;
-			tutorial.y = Locator.mainStage.stageHeight * 0.8;
+			tutorial.x = Locator.mainStage.stageWidth * 0.69;
+			tutorial.y = Locator.mainStage.stageHeight * 0.84;
 			tutorial.addEventListener(MouseEvent.MOUSE_DOWN, tutorialDown);
 			tutorial.addEventListener(MouseEvent.MOUSE_UP, tutorialUp);
 			
@@ -48,6 +58,17 @@ package
 		{
 			start.gotoAndStop("Normal");
 			changeScene("Game");
+		}
+		
+		private function optionsDown(e:MouseEvent):void
+		{
+			options.gotoAndStop("Press");
+		}
+		
+		private function optionsUp(e:MouseEvent):void
+		{
+			options.gotoAndStop("Normal");
+			changeScene("Options");
 		}
 		
 		private function tutorialDown(e:MouseEvent):void
@@ -69,12 +90,15 @@ package
 			
 			Locator.soundManager.stop(SoundID.MENU);
 			
-			if (start.parent != null && tutorial.parent != null)
+			if (start.parent != null && tutorial.parent != null && options.parent != null)
 			{
 				start.parent.removeChild(start);
+				options.parent.removeChild(options);
 				tutorial.parent.removeChild(tutorial);
 				start.removeEventListener(MouseEvent.MOUSE_DOWN, startDown);
 				start.removeEventListener(MouseEvent.MOUSE_UP, startUp);
+				options.removeEventListener(MouseEvent.MOUSE_DOWN, optionsDown);
+				options.removeEventListener(MouseEvent.MOUSE_UP, optionsUp);
 				tutorial.removeEventListener(MouseEvent.MOUSE_DOWN,tutorialDown);
 				tutorial.removeEventListener(MouseEvent.MOUSE_UP,tutorialUp);
 			}

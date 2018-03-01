@@ -22,8 +22,8 @@ package
 			backButton = new MovieClip();
 			backButton = Locator.assetManager.getMovieClip("BackButton");
 			Locator.mainStage.addChild(backButton);
-			backButton.x = 1250;
-			backButton.y = 750;
+			backButton.x = 1230;
+			backButton.y = 800;
 			backButton.addEventListener(MouseEvent.MOUSE_DOWN,backDown);
 			backButton.addEventListener(MouseEvent.MOUSE_UP,backUp);
 			
