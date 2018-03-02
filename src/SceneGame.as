@@ -45,8 +45,8 @@ package
 		
 		private var ending:GIFPlayer;
 		
-		public static var score:int = 0;
-		public static var highscore:int = 0;
+		//public static var score:int = 0;
+		//public static var highscore:int = 0;
 		
 		public function SceneGame()
 		{
@@ -75,7 +75,7 @@ package
 			hero = new Hero();
 			hero.spawn(C.PLAYER_START_X, C.PLAYER_START_Y);
 			
-			behaviors = new Behaviors(enemy,hero);
+			behaviors = new Behaviors(enemy, hero);
 			behaviors.changeEnemy(currentLevel);
 						
 			win = new MovieClip();
@@ -300,34 +300,37 @@ package
 		
 		public function loadLevel(newLevel:int):void
 		{
-			clearInterval(restartTime);
-			hero.destroy();
-			hud.destroy();
-			
-			level.changeLevel(newLevel);
-			enemy.changeEnemy(newLevel, C.ENEMY_START_X, C.ENEMY_START_Y);
-			
-			hero.spawn(C.PLAYER_START_X, C.PLAYER_START_Y);
-			
-			behaviors.changeEnemy(newLevel);
-			hud.init(newLevel);
-			
-			if (win.parent != null) 
-			{	
-				win.parent.removeChild(win);
-			}
-			
-			if (lose.parent != null) 
-			{	
-				lose.parent.removeChild(lose);
-			}
-			
-			if (Locator.console.isOpen) 
-			{	
-				Locator.console.exit();
-			}
+			if (newLevel >= 1 && newLevel <= 3)
+			{
+				clearInterval(restartTime);
+				hero.destroy();
+				hud.destroy();
 				
-			currentState = PLAYING;
+				level.changeLevel(newLevel);
+				enemy.changeEnemy(newLevel, C.ENEMY_START_X, C.ENEMY_START_Y);
+				
+				hero.spawn(C.PLAYER_START_X, C.PLAYER_START_Y);
+				
+				behaviors.changeEnemy(newLevel);
+				hud.init(newLevel);
+				
+				if (win.parent != null) 
+				{	
+					win.parent.removeChild(win);
+				}
+				
+				if (lose.parent != null) 
+				{	
+					lose.parent.removeChild(lose);
+				}
+				
+				if (Locator.console.isOpen) 
+				{	
+					Locator.console.exit();
+				}
+					
+				currentState = PLAYING;
+			}
 		}
 		
 		public function suddenDeath():void

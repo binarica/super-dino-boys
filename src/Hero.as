@@ -36,11 +36,9 @@ package
 			Locator.inputManager.setRelation("Punch", Keyboard.J);
 			Locator.inputManager.setRelation("Kick", Keyboard.K);	
 			
-			Locator.console.registerCommand("doublespeed", doubleSpeed, "Double speed.");
+			Locator.console.registerCommand("flash", doubleSpeed, "Double speed.");
 			Locator.console.registerCommand("moonwalk", moon, "No gravity.");
-			Locator.console.registerCommand("god", godMode, "God Mode.");
 			Locator.console.registerCommand("givehealth", giveHealth, "Full health.");
-			Locator.console.registerCommand("givepowershield", givePowerShield, "Power shield.");
 		}
 		
 		public function doubleSpeed():void
@@ -54,27 +52,12 @@ package
 			gravity = C.GRAVITY / 2;
 		}
 		
-		public function godMode(status:String):void
-		{
-			if (status == "on")
-				Locator.console.write("God mode on");
-			else if(status == "off")
-				Locator.console.write("God mode off");	
-			else
-				Locator.console.write("Missing parameter");
-		}
-		
 		public function giveHealth():void
 		{
 			health = C.PLAYER_MAX_HEALTH;
 			Locator.console.write("Restored to full health!");
 		}
-		
-		public function givePowerShield():void
-		{
-			Locator.console.write("Super mega fokken power shield!!1!");
-		}
-		
+			
 		override public function spawn(x:int, y:int):void
 		{
 			Locator.mainStage.addChild(model);
@@ -304,11 +287,9 @@ package
 		{
 			if (model.parent != null)
 			{
-				Locator.console.unregisterCommand("doublespeed");
-				Locator.console.unregisterCommand("fly");
-				Locator.console.unregisterCommand("god");
+				Locator.console.unregisterCommand("flash");
+				Locator.console.unregisterCommand("moonwalk");
 				Locator.console.unregisterCommand("givehealth");
-				Locator.console.unregisterCommand("givepowershield");
 				
 				Locator.mainStage.removeChild(model);
 				

@@ -4,7 +4,7 @@ cd %~dp0 & cd ..
 :user_configuration
 
 :: Static path to Flex SDK
-set FLEX_SDK=C:\Users\brian\AppData\Local\FlashDevelop\Apps\flexairsdk\4.6.0+24.0.0
+set FLEX_SDK=C:\Users\brian\AppData\Local\FlashDevelop\Apps\flexairsdk\4.6.0+28.0.0
 
 :: Use FD supplied SDK path if executed from FD
 if exist "%FD_CUR_SDK%" set FLEX_SDK=%FD_CUR_SDK%

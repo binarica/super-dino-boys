@@ -24,16 +24,16 @@ package
 			start = new MovieClip();
 			start = Locator.assetManager.getMovieClip("StartButton");
 			Locator.mainStage.addChild(start);
-			start.x = Locator.mainStage.stageWidth * 0.04;
-			start.y = Locator.mainStage.stageHeight * 0.84;
+			start.x = 45;
+			start.y = 750;
 			start.addEventListener(MouseEvent.MOUSE_DOWN, startDown);
 			start.addEventListener(MouseEvent.MOUSE_UP, startUp);
 			
 			options = new MovieClip();
 			options = Locator.assetManager.getMovieClip("OptionsButton");
 			Locator.mainStage.addChild(options);
-			options.x = Locator.mainStage.stageWidth * 0.34;
-			options.y = Locator.mainStage.stageHeight * 0.84;
+			options.x = 490;
+			options.y = 750;
 			options.addEventListener(MouseEvent.MOUSE_DOWN, optionsDown);
 			options.addEventListener(MouseEvent.MOUSE_UP, optionsUp);
 			
@@ -41,8 +41,8 @@ package
 			tutorial = new MovieClip();
 			tutorial = Locator.assetManager.getMovieClip("TutorialButton");
 			Locator.mainStage.addChild(tutorial);
-			tutorial.x = Locator.mainStage.stageWidth * 0.69;
-			tutorial.y = Locator.mainStage.stageHeight * 0.84;
+			tutorial.x = 950;
+			tutorial.y = 750;
 			tutorial.addEventListener(MouseEvent.MOUSE_DOWN, tutorialDown);
 			tutorial.addEventListener(MouseEvent.MOUSE_UP, tutorialUp);
 			

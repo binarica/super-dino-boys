@@ -32,7 +32,7 @@ package engine
 			
 			console_log = new TextField();
 			console_log.x = 125;
-			console_log.y = 125;
+			console_log.y = 175;
 			console_log.defaultTextFormat = console_format;
 			console_log.width = C.GAME_WIDTH;
 			console_log.height = C.GAME_HEIGHT * 0.75;

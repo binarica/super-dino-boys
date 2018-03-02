@@ -10,16 +10,8 @@ package
 	{
 		public var enemyList:Array = new Array();
 		
-		/* 
-		usá un diccionario, cambiá el enemigo actual con un string:
-		public var enemyList:Dictionary = new Dictionary();
-		private var enemyName:String;
-		*/
-		
-		//o con un array:
-		//public static const enemyNames:Array = new Array("lev1","lev2","lev3");
-		
 		public var health:int = C.ENEMY_MAX_HEALTH;
+		public var speed:Number = C.ENEMY_SPEED;
 		private var timerPunch:uint;
 		private var timerKick:uint;
 		private var timerDamage:uint;
@@ -27,10 +19,23 @@ package
 		private var currentLevel:int = 1;
 		
 		public function Enemy()
-		{		
+		{
+			Locator.console.registerCommand("badass", doubleSpeed, "Enemy double speed.");
+			Locator.console.registerCommand("gandhi", giveHealth, "Enemy restore health.");
+			
 			enemyList.push(Locator.assetManager.getMovieClip("Rumble"));
 			enemyList.push(Locator.assetManager.getMovieClip("Robot"));
 			enemyList.push(Locator.assetManager.getMovieClip("Alien"));
+		}
+		
+		public function doubleSpeed():void
+		{
+			speed *= 2;
+		}
+		
+		public function giveHealth():void
+		{
+			health = C.ENEMY_MAX_HEALTH;
 		}
 		
 		override public function spawn(x:int, y:int):void
@@ -64,7 +69,7 @@ package
 				}
 				else
 				{
-					enemyList[currentLevel-1].x -= C.ENEMY_SPEED;	
+					enemyList[currentLevel-1].x -= speed;	
 				}
 			}
 			else if(right && !isPunching && !isKicking && !isCrouching)
@@ -79,7 +84,7 @@ package
 				}
 				else
 				{
-					enemyList[currentLevel-1].x += C.ENEMY_SPEED;	
+					enemyList[currentLevel-1].x += speed;	
 				}
 			}
 		}
@@ -224,7 +229,7 @@ package
 			damageAnimation = false;
 			punchEnable = true;
 			kickEnable = true;
-			//speed = 20; por si queremos cambiar la velocidad a otros enemigos...
+			speed = C.ENEMY_SPEED * (currentLevel);
 			velocityY = 0;
 			health = C.ENEMY_MAX_HEALTH;
 		}
@@ -235,6 +240,9 @@ package
 			{
 				if(enemyList[i].parent != null) enemyList[i].parent.removeChild(enemyList[i]);
 			}
+			
+			Locator.console.unregisterCommand("badass");
+			Locator.console.unregisterCommand("gandhi");
 			
 			left = false;
 			right = false;
@@ -253,6 +261,7 @@ package
 			damageAnimation = false;
 			velocityY = 0;
 			health = C.ENEMY_MAX_HEALTH;
+			speed = C.ENEMY_SPEED;
 			currentLevel = 1;
 		}
 	}

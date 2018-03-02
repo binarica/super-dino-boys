@@ -12,7 +12,7 @@
 		public static const GRAVITY:Number = 5;
 		public static const FLOOR_Y:int = 800;
 		
-		public static const PLAYER_SPEED:Number = 15;
+		public static const PLAYER_SPEED:Number = 12;
 		public static const PLAYER_START_X:Number = 200;
 		public static const PLAYER_START_Y:Number = 550;
 		public static const PLAYER_JUMP_FORCE:Number = 65;

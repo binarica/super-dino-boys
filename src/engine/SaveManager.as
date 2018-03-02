@@ -15,7 +15,7 @@ package engine
 		
 		public function save():void
 		{
-			saver = SharedObject.getLocal("SarasaTheGame", "/");
+			saver = SharedObject.getLocal("SuperDinoBoys", "/");
 			saver.data.mySaves = allData;
 			saver.flush();
 			allData = new Dictionary();
@@ -23,7 +23,7 @@ package engine
 		
 		public function load():void
 		{
-			saver = SharedObject.getLocal("SarasaTheGame", "/");
+			saver = SharedObject.getLocal("SuperDinoBoys", "/");
 			
 			allData = new Dictionary();
 			for(var varName:String in saver.data.mySaves)
